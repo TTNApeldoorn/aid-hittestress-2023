@@ -388,8 +388,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "my-KiCad-library"
+    ],
+    "pinned_symbol_libs": [
+      "my-KiCad-library"
+    ]
   },
   "meta": {
     "filename": "HitteStress2023_pcb.kicad_pro",
