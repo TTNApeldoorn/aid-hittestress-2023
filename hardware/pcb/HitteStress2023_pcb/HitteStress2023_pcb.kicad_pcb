@@ -170,6 +170,11 @@
       (net 9 "unconnected-(S2-SEL-Pad4)") (pinfunction "SEL") (pintype "bidirectional") (thermal_bridge_angle 45) (tstamp 6eedc7cf-bab4-478e-9882-3cd18a9dc534))
     (pad "5" thru_hole oval (at 5.08 0) (size 1.2 2) (drill 0.8) (layers "*.Cu" "*.Mask")
       (net 4 "/GND") (pinfunction "GND") (pintype "power_in") (thermal_bridge_angle 45) (tstamp d59f4180-a718-4b59-baa2-c921ff709459))
+    (model ":KICAD7_3DMODEL_DIR:Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x05_P2.54mm_Vertical.step"
+      (offset (xyz 5.08 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
   )
 
   (footprint "my-KiCad-library:AM2315C" (layer "F.Cu")
@@ -287,6 +292,11 @@
       (net 7 "/SDA") (pinfunction "IIC-SDA") (pintype "bidirectional") (tstamp b8379362-b62a-46dc-8ff1-e842bfe82f0f))
     (pad "4" thru_hole circle (at 7.553 -0.0675) (size 2.2 2.2) (drill 1.1) (layers "*.Cu" "*.Mask")
       (net 4 "/GND") (pinfunction "GND") (pintype "power_in") (tstamp a3ff6fdf-c93a-4941-9e39-9b622d4a33fd))
+    (model "C:/Users/Remko Welling/kicad/footprints/TerminalBlock_Phoenix.3dshapes/TerminalBlock_Phoenix_MPT-0,5-4-2.54_1x04_P2.54mm_Horizontal.step"
+      (offset (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (footprint "Connector_Phoenix_GMSTB:PhoenixContact_GMSTBVA_2,5_2-G-7,62_1x02_P7.62mm_Vertical" (layer "F.Cu")
@@ -571,6 +581,11 @@
       (net 4 "/GND") (pinfunction "GND") (pintype "power_out") (thermal_bridge_angle 45) (tstamp e2528cb6-b7ef-43c7-9f41-bd407fe4772e))
     (pad "3" thru_hole oval (at 0 2.54 270) (size 1.2 2) (drill 0.8) (layers "*.Cu" "*.Mask")
       (net 8 "/5V_SPS") (pinfunction "Vo") (pintype "power_out") (thermal_bridge_angle 45) (tstamp d32b78d4-f5c0-4d26-bf48-bfea69ab76a3))
+    (model ":KICAD7_3DMODEL_DIR:Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x03_P2.54mm_Vertical.wrl"
+      (offset (xyz 0 2.54 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (footprint "my-KiCad-library:SMA-ANT-CONN" (layer "F.Cu")
@@ -723,6 +738,16 @@
       (net 28 "unconnected-(U2-RX-Pad25)") (pinfunction "RX") (pintype "input") (thermal_bridge_angle 45) (tstamp a2c32a51-5ed8-4c0b-82c6-67ccd0f883b4))
     (pad "26" thru_hole oval (at 9.76 31.4 180) (size 1.5 3) (drill 0.8) (layers "*.Cu" "*.Mask")
       (net 29 "unconnected-(U2-TX-Pad26)") (pinfunction "TX") (pintype "output") (thermal_bridge_angle 45) (tstamp e884f2a4-b3bb-4b22-9c16-4a2d1a301f23))
+    (model ":KICAD7_3DMODEL_DIR:Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x13_P2.54mm_Vertical.step"
+      (offset (xyz 40.4 -31.5 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
+    (model ":KICAD7_3DMODEL_DIR:Connector_PinSocket_2.54mm.3dshapes/PinSocket_1x13_P2.54mm_Vertical.step"
+      (offset (xyz 40.2 -5.5 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 90))
+    )
   )
 
   (gr_rect (start 78.74 71.628) (end 94.24 78.74)
