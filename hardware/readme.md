@@ -16,3 +16,6 @@ De AM2315 en SPS30 zitten parallel op de I2C bus als volgt:
 Het board draait nu 24 uur op de batterij, en Vbat is van 4,095V nu gezakt naar 3,898V. Volgens mij houdt die het wel een tijdje uit op de batterij.
 
 De 5v pin op het TTGO board is een 5v output pin, en geen 5v input. Dus de externe 5v voeding moet aangesloten worden op de micro USB connector, anders werkt het laad circuit niet.
+
+
+https://github.com/Xinyuan-LilyGO/LilyGo-LoRa-Series
