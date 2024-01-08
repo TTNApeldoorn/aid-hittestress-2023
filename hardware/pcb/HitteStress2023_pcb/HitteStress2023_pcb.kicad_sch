@@ -6,8 +6,8 @@
 
   (title_block
     (title "Ittestress 2023 (Homerus Edition)")
-    (date "2024-01-01")
-    (rev "0.9")
+    (date "2024-01-08")
+    (rev "1.0")
     (company "IoT-Apeldoorn")
     (comment 1 "Designed by RFSee for")
     (comment 2 "https://github.com/TTNApeldoorn/aid-hittestress-2023")
@@ -825,7 +825,7 @@
     (property "Value" "Conn_01x02_Socket" (at 32.385 59.69 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector_Phoenix_GMSTB:PhoenixContact_GMSTBVA_2,5_2-G-7,62_1x02_P7.62mm_Vertical" (at 31.75 64.77 0)
+    (property "Footprint" "Connector_Phoenix_MC_HighVoltage:PhoenixContact_MCV_1,5_2-G-5.08_1x02_P5.08mm_Vertical" (at 31.75 64.77 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 31.75 64.77 0)
@@ -851,7 +851,7 @@
     (property "Value" "Conn_01x02_Socket" (at 92.71 62.23 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "my-KiCad-library:TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal" (at 91.44 64.77 0)
+    (property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_MPT-0,5-2-2.54_1x02_P2.54mm_Horizontal" (at 91.44 64.77 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 91.44 64.77 0)
