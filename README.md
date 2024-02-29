@@ -22,5 +22,5 @@ They are mounted in 6 lampposts.
 
  <img src="hardware/documentation/PXL_20240218_104554043.jpg" width="200" >
 
-Air inlet dust sensor, with insect sreen# aid-hittestress-2023
-Hittestres sensor for project Homerusstraat
+Air inlet dust sensor,  with insect sreen# aid-hittestress-2023
+
