@@ -20,7 +20,7 @@ They are mounted in 6 lampposts.
 
  Climate Sensor in Kradex housing
 
- <img src=""hardware/documentation/PXL_20240218_104554043.jpg" width="200" >
+ <img src="hardware/documentation/PXL_20240218_104554043.jpg" width="200" >
 
 Air inlet dust sensor, with insect sreen# aid-hittestress-2023
 Hittestres sensor for project Homerusstraat
