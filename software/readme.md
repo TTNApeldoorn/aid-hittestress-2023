@@ -11,7 +11,7 @@ These climate sensors are designed for the Homerus-Energiek project in Apeldoorn
 - PCB for connecting components
 - Kradex housing 176x126x57mm - IP65
 
-There are 2 type of TTGO T-Beam versions are used:
+There are 2 types of TTGO T-Beam versions:
 - TTGO T-Beam V1.2 with LoRa SX1262
 - TTGO T-Beam V1.2 with LoRa SX1276
 
