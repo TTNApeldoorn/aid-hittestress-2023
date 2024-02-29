@@ -14,6 +14,7 @@ These climate sensors are designed for the Homerus-Energiek project in Apeldoorn
 There are 2 type of TTGO T-Beam versions are used:
 - TTGO T-Beam V1.2 with LoRa SX1262
 - TTGO T-Beam V1.2 with LoRa SX1276
+
 For this reason we use the LoRa LacunaSpace basicmac library wich supports both LoRa chips SX1262 and SX1276
 
 ## Software 
