@@ -45,3 +45,29 @@ Change the paramaters by (un)commenting those lines accodingly, if you have a sx
 ### LoRaWan TTN keys
 In the file configuration.h the TTN keys APPEUI an APPKEY are defined.
 The unique DEVEUI key is obtained from the T-BEAM board id.
+
+## TTN interface
+Two type of messages are sent by the sensor:
+- measurement report (each 2 minutes), send on TTN port 15
+- status report (eachtime after 100 measurement reports), send on TTN port 16
+
+Measurement report contains:
+- temperature in C
+- Relative Humidity in %
+- Particulate Matter 1.0 μg/m3
+- Particulate Matter 2.5 μg/m3
+- Particulate Matter 10 μg/m3
+- Battery voltage in V
+
+Status report contains:
+- GPS position lat/lon, hdop, altitude
+- Sensor version
+- batterij voltage
+
+The binary messages from the Sensor are converted by the TTN Payloaddecoder into Json.  
+Example JSON measurement message:
+
+> {"pm10":8.5,"pm1p0":7.22,"pm2p5":8.02,"rh":99.99,"temp":7.82,"vbat":4.037}
+
+Example JSON status message:
+> {"latitude":52.224578,"longitude":6.0061902,"alt":0.0,"hdop":1.61,vbat":4.099,"SwVer":3.02 }
