@@ -1,17 +1,5 @@
 # Homerus Climate sensor 2023
 These climate sensors are designed for the Homerus-Energiek project in Apeldoorn.
-They are mounted in 6 lampposts.
-
-## Requirements 
-- each 2 minutes the measurements  of
-   - temperature
-   - humidity
-   - Dust PM 1, PM 2.5 and PM 10
-- radio communication by means of LoRaWan TTN OTAA
-- can be mounted on lamppost (case IP65)
-- LiPo battery management, charged at night (when lamppost is on)
-- Supply 230V
-- GPS location and battery voltage are reported at regular intervals
 
 ## Hardware:
 - LilyGO TTGO T-Beam - LoRa 868MHz - NEO-M8N GPS - ESP32 
