@@ -1,17 +1,14 @@
 # aid-hittestress-2023
 
-These climate sensors are designed for the Homerus-Energiek project in Apeldoorn.  
-They are mounted in 6 lampposts.
+These climate sensors are designed for the Homerus-Energiek project in Apeldoorn. They measures temperature, humidity and air quality.
+The sensors are mounted in lampposts and communicate via LoRAWan with the TTN network.
 
 ## Requirements 
-- each 2 minutes the sensor measures and sends the following parameters to the network:
-   - temperature
-   - humidity
-   - Dust PM 1.0, PM 2.5 and PM 10
-- radio communication by means of LoRaWan TTN OTAA
-- can be mounted on lamppost (case IP65)
-- LiPo battery management, charged at night (when lamppost is on)
-- Supply 230V
+- The sensor measures each 2 minutes temperatue, humidity and particular matter PM1.0, 2.5 and 10
+- The sensor sends the measurements to the TTN network using LoRaWan radio
+- The sensor can be mounted on lamppost (case IP65)
+- The sensor operates on LiPo battery (for minimal 18 hours) and can be charged by 230V supply 
+- The sensor battery is charged at night by the lamppost
 - GPS location and battery voltage are reported at regular intervals
 
 ## Realization
