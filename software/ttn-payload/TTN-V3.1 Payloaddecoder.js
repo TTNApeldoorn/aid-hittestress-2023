@@ -1,7 +1,7 @@
 // 23/7/2019: copied from 2018 Payload format. 
 // 6/8/2019 by MM: bugs solved, sign bit was not processed, Vcc en Vbat added to message 0xB
 // 5/10/2020 by MM cleanup message 0xA and 0xC removed
-// 25/04/2021 adpated for TTN 
+// 25/04/2021 adapted for TTN 
 // 25/04/2021 added decode Little Endian functions for Hittestress 2021 port 15 en 16
 // 28/10/2023 added PM1.0 and Cpu-Temp. for Hittestres Homerus 2023 resp. port 15 and 16
 

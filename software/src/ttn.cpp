@@ -23,7 +23,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <lmic.h>
+#include "Arduino.h"
+#include <basicmac.h>
 #include <hal/hal.h>
 #include <SPI.h>
 #include <Preferences.h>
@@ -33,12 +34,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Globals
 // -----------------------------------------------------------------------------
 
-// LMIC GPIO configuration
+// LMIC GPIO configuration for SX1262
 const lmic_pinmap lmic_pins = {
-  .nss = NSS_GPIO,
-  .rxtx = LMIC_UNUSED_PIN,
-  .rst = RESET_GPIO,
-  .dio = { DIO0_GPIO, DIO1_GPIO, DIO2_GPIO },
+    .nss = LORA_CS, // 18
+    // TXEN is controlled through DIO2 by the SX1262 (HPD16A) directly
+    .tx = LMIC_CONTROLLED_BY_DIO2,
+    .rx = LMIC_UNUSED_PIN,
+    .rst = LORA_RST, // 23
+    .dio = {LMIC_UNUSED_PIN, LORA_IO1  /* 33 */, LMIC_UNUSED_PIN},
+    .busy = LORA_IO2, // 32
+    // TCXO is controlled through DIO3 by the SX1262 directly
+    .tcxo = LMIC_CONTROLLED_BY_DIO3,
 };
 
 // Message counter, stored in RTC memory, survives deep sleep.
@@ -56,15 +62,19 @@ static void printKeys(u4_t netid, devaddr_t devaddr, u1_t* nwkKey, u1_t* artKey)
 // handle TTN OTAA keys
 static char deveui[32];  // generated from board id
 extern void os_getDevEui (u1_t* buf) { parseHexReverse( buf, deveui);}
-extern void os_getArtEui (u1_t* buf) { parseHexReverse( buf, APPEUI);}
-extern void os_getDevKey (u1_t* buf) { parseHex( buf, APPKEY);}
+extern void os_getJoinEui (u1_t* buf) { parseHexReverse( buf, APPEUI);}
+extern void os_getNwkKey (u1_t* buf) { parseHex( buf, APPKEY);}
+
+u1_t os_getRegion (void) { return LMIC_regionCode(0); }
 
 // -----------------------------------------------------------------------------
 // Private methods
 // -----------------------------------------------------------------------------
 
 // LMIC library will call this method when an event is fired
-void onEvent(ev_t ev) {
+void onLmicEvent (ev_t ev) {
+    Serial.print(os_getTime());
+    Serial.print(": ");
     switch(ev) {
         case EV_SCAN_TIMEOUT:
             Serial.println(F("EV_SCAN_TIMEOUT"));
@@ -81,58 +91,48 @@ void onEvent(ev_t ev) {
         case EV_JOINING:
             Serial.println(F("EV_JOINING"));
             break;
-        case EV_JOINED: {
+        case EV_JOINED:
             Serial.println(F("EV_JOINED"));
-            
-            u4_t netid = 0;
-            devaddr_t devaddr = 0;
-            u1_t nwkKey[16];
-            u1_t artKey[16];
-            LMIC_getSessionKeys(&netid, &devaddr, nwkKey, artKey);
-            printKeys(netid, devaddr, nwkKey, artKey);
-            // save network keys to permanent storage  
-            Preferences p;
-            if( p.begin("lora", false)) {
-              p.putUInt("netId", netid);
-              p.putUInt("devAddr", devaddr);
-              p.putBytes("nwkKey", nwkKey, sizeof(nwkKey));
-              p.putBytes("artKey", artKey, sizeof(artKey));
-              p.end();
+            //u4_t netid = 0;
+            //devaddr_t devaddr = 0;
+            //u1_t nwkKey[16];
+            //u1_t artKey[16];
+            //LMIC_getSessionKeys(&netid, &devaddr, nwkKey, artKey);
+            //printKeys(LMIC.netid, LMIC.devaddr, LMIC.lceCtx.nwkSKey, LMIC.lceCtx.appSKey);
+            // save network keys to permanent storage 
+            {
+              Preferences p;
+              if( p.begin("lora", false)) {
+                p.putUInt("netId", LMIC.netid);
+                p.putUInt("devAddr", LMIC.devaddr);
+                p.putBytes("nwkKey", LMIC.lceCtx.nwkSKey, 16);
+                p.putBytes("artKey", LMIC.lceCtx.appSKey, 16);
+                p.end();
+              }
             }
             // Disable link check validation (automatically enabled
-            // during join, but because slow data rates change max TX
-            // size, we don't use it in this example.
+            // during join, but not supported by TTN at this time).
             LMIC_setLinkCheckMode(0);
-            break; }
-        /*
-        || This event is defined but not used in the code. No
-        || point in wasting codespace on it.
-        ||
-        || case EV_RFU1:
-        ||     Serial.println(F("EV_RFU1"));
-        ||     break;
-        */
+            break;
+        case EV_RFU1:
+            Serial.println(F("EV_RFU1"));
+            break;
         case EV_JOIN_FAILED:
             Serial.println(F("EV_JOIN_FAILED"));
             break;
         case EV_REJOIN_FAILED:
             Serial.println(F("EV_REJOIN_FAILED"));
             break;
+            break;
         case EV_TXCOMPLETE:
             Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
             if (LMIC.txrxFlags & TXRX_ACK)
               Serial.println(F("Received ack"));
-            if (LMIC.dataLen) {    // call application callback, to handle TTN received message
+            if (LMIC.dataLen) {
               Serial.print(F("Received "));
               Serial.print(LMIC.dataLen);
               Serial.println(F(" bytes of payload"));
-              if( rxCallback != NULL) 
-                rxCallback( LMIC.frame[LMIC.dataBeg-1], &LMIC.frame[LMIC.dataBeg], LMIC.dataLen);
             }
-            if( txCallback != NULL)
-              txCallback();
-            // Schedule next transmission
-            //os_setTimedCallback(&sendjob, os_getTime()+sec2osticks(TX_INTERVAL), do_send);
             break;
         case EV_LOST_TSYNC:
             Serial.println(F("EV_LOST_TSYNC"));
@@ -150,30 +150,28 @@ void onEvent(ev_t ev) {
         case EV_LINK_ALIVE:
             Serial.println(F("EV_LINK_ALIVE"));
             break;
-        /*
-        || This event is defined but not used in the code. No
-        || point in wasting codespace on it.
-        ||
-        || case EV_SCAN_FOUND:
-        ||    Serial.println(F("EV_SCAN_FOUND"));
-        ||    break;
-        */
+        case EV_SCAN_FOUND:
+            Serial.println(F("EV_SCAN_FOUND"));
+            break;
         case EV_TXSTART:
             Serial.println(F("EV_TXSTART"));
             break;
-        case EV_TXCANCELED:
-            Serial.println(F("EV_TXCANCELED"));
+        case EV_TXDONE:
+            Serial.println(F("EV_TXDONE"));
             break;
-        case EV_RXSTART:
-            /* do not print anything -- it wrecks timing */
+        case EV_DATARATE:
+            Serial.println(F("EV_DATARATE"));
             break;
-        case EV_JOIN_TXCOMPLETE:
-            Serial.println(F("EV_JOIN_TXCOMPLETE: no JoinAccept"));
+        case EV_START_SCAN:
+            Serial.println(F("EV_START_SCAN"));
+            break;
+        case EV_ADR_BACKOFF:
+            Serial.println(F("EV_ADR_BACKOFF"));
             break;
 
-        default:
+         default:
             Serial.print(F("Unknown event: "));
-            Serial.println((unsigned) ev);
+            Serial.println(ev);
             break;
     }
 }
@@ -197,58 +195,31 @@ extern bool ttn_setup() {
   printf("DEVEUI=%s\n", deveui);
 
   // SPI interface
-  SPI.begin(SCK_GPIO, MISO_GPIO, MOSI_GPIO, NSS_GPIO);
+  //SPI.begin(SCK_GPIO, MISO_GPIO, MOSI_GPIO, NSS_GPIO);
 
   // LMIC init
-  if( !os_init_ex((const void*)&lmic_pins) )
-    return false;
-
-  // Reset the MAC state. Session and pending data transfers will be discarded.
-  LMIC_reset();
+    os_init(nullptr);
+    LMIC_reset();
 
 #ifdef CLOCK_ERROR
   LMIC_setClockError(MAX_CLOCK_ERROR * CLOCK_ERROR / 100);
 #endif
-
-  // Set up the channels used by the Things Network, which corresponds
-  // to the defaults of most gateways. Without this, only three base
-  // channels from the LoRaWAN specification are used, which certainly
-  // works, so it is good for debugging, but can overload those
-  // frequencies, so be sure to configure the full frequency range of
-  // your network here (unless your network autoconfigures them).
-  // Setting up channels should happen after LMIC_setSession, as that
-  // configures the minimal channel set.
-  LMIC_setupChannel(0, 868100000, DR_RANGE_MAP(DR_SF12, DR_SF7), BAND_CENTI);   // g-band
-  LMIC_setupChannel(1, 868300000, DR_RANGE_MAP(DR_SF12, DR_SF7B), BAND_CENTI);  // g-band
-  LMIC_setupChannel(2, 868500000, DR_RANGE_MAP(DR_SF12, DR_SF7), BAND_CENTI);   // g-band
-  LMIC_setupChannel(3, 867100000, DR_RANGE_MAP(DR_SF12, DR_SF7), BAND_CENTI);   // g-band
-  LMIC_setupChannel(4, 867300000, DR_RANGE_MAP(DR_SF12, DR_SF7), BAND_CENTI);   // g-band
-  LMIC_setupChannel(5, 867500000, DR_RANGE_MAP(DR_SF12, DR_SF7), BAND_CENTI);   // g-band
-  LMIC_setupChannel(6, 867700000, DR_RANGE_MAP(DR_SF12, DR_SF7), BAND_CENTI);   // g-band
-  LMIC_setupChannel(7, 867900000, DR_RANGE_MAP(DR_SF12, DR_SF7), BAND_CENTI);   // g-band
-  LMIC_setupChannel(8, 868800000, DR_RANGE_MAP(DR_FSK, DR_FSK), BAND_MILLI);    // g2-band
-
-
-  // TTN defines an additional channel at 869.525Mhz using SF9 for class B
-  // devices' ping slots. LMIC does not have an easy way to define set this
-  // frequency and support for class B is spotty and untested, so this
-  // frequency is not configured here.
-
-  // Disable link check validation
-  LMIC_setLinkCheckMode(0);
+  // Disable link check validation  // to be checked MM 
+  //LMIC_setLinkCheckMode(0);
 
   // Set default rate and transmit power for uplink (note: txpow seems to be ignored by the library)
-  LMIC_setDrTxpow(DR_SF9, 14);
-  LMIC_setAdrMode(0);
+  // LMIC_setDrTxpow(DR_SF9, 14);
+  //LMIC_setAdrMode(0);
 
   Preferences p;
   p.begin("lora", true);  // we intentionally ignore failure here
   uint32_t netId = p.getUInt("netId", UINT32_MAX);
   uint32_t devAddr = p.getUInt("devAddr", UINT32_MAX);
   uint8_t nwkKey[16], artKey[16];
-  bool keysgood = p.getBytes("nwkKey", nwkKey, sizeof(nwkKey)) == sizeof(nwkKey) && p.getBytes("artKey", artKey, sizeof(artKey)) == sizeof(artKey);
+  bool keysgood = p.getBytes("nwkKey", nwkKey, sizeof(nwkKey)) == sizeof(nwkKey) && 
+                  p.getBytes("artKey", artKey, sizeof(artKey)) == sizeof(artKey);
   p.end();  // close our prefs
-  printKeys(netId, devAddr, nwkKey, artKey);
+  //printKeys(netId, devAddr, nwkKey, artKey);
 
   if (!keysgood) {
     // We have not yet joined a network, start a full join attempt
@@ -262,6 +233,7 @@ extern bool ttn_setup() {
     Serial.println("Rejoining saved session");
     LMIC_setSession(netId, devAddr, nwkKey, artKey);
   }
+  p.end();
   return true;
 }
 
@@ -281,8 +253,9 @@ extern bool ttn_send(uint8_t* data, uint8_t data_size, uint8_t port) {
   }
   // Prepare upstream data transmission at the next possible time.
   // Parameters are port, data, length, confirmed
-  printf("LMIC_setTxData2 count=%d\n", count);
-  LMIC_setSeqnoUp(count);
+  //printf("LMIC_setTxData2 count=%d\n", count);
+  LMIC.seqnoUp = count;
+  //LMIC_setSeqnoUp(count);  // TODO  MM
   LMIC_setTxData2(port, data, data_size, 0);
   count++;
   return true;
@@ -292,8 +265,12 @@ extern bool ttn_connected() {
   return (LMIC.devaddr != 0);
 }
 
+void ttn_shutdown() {
+  LMIC_shutdown();
+}
+
 extern void ttn_loop() {
-  os_runloop_once();
+  os_runstep();
 }
 
 // local helper fumctions

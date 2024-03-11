@@ -44,7 +44,7 @@ bool Sps30::init() {
   return true;
 }
 bool Sps30::read() {
-  printf("Sps30::read\n");
+  //printf("Sps30::read\n");
   pm10 = pm2_5 = pm1_0 = 0.0;
 
   sps30_start_measurement();  // Start of loop start fan to flow air past laser sensor
@@ -56,7 +56,7 @@ bool Sps30::read() {
       sps30_stop_measurement();
       return false;
     }    
-    printf("PM1.0=%.2f PM2.5=%.2f PM10=%.2f\n", m.mc_1p0, m.mc_2p5, m.mc_10p0);
+    //printf("PM1.0=%.2f PM2.5=%.2f PM10=%.2f\n", m.mc_1p0, m.mc_2p5, m.mc_10p0);
     pm10  += m.mc_10p0;
     pm2_5 += m.mc_2p5;
     pm1_0 += m.mc_1p0;
@@ -65,7 +65,7 @@ bool Sps30::read() {
   pm10  /= 5.0;
   pm2_5 /= 5.0; 
   pm1_0 /= 5.0;;
-  printf("PM1.0=%.2f PM2.5=%.2f PM10=%.2f\n", pm1_0, pm2_5, pm10);
+  //printf("PM1.0=%.2f PM2.5=%.2f PM10=%.2f\n", pm1_0, pm2_5, pm10);
   sps30_stop_measurement();  //Disables Fan 
   return true;
 }
